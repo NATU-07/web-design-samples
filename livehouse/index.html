@@ -91,7 +91,7 @@
     <div class="sub jp"><span>地下の箱</span><span>収容120人。一晩に2〜4組</span><span>地下1階 / 駅から徒歩4分</span><span class="mouse-only">マウスを文字に近づけてみて</span></div>
   </section>
 
-  <div class="belt ab" id="belt1" aria-hidden="true"><div class="in" id="in1"><span>LIVE IN THE BASEMENT</span><span>NO LAST TRAIN PROBLEM</span><span>120 PEOPLE</span></div></div>
+  <div class="belt ab" id="belt1" aria-hidden="true"><div class="in" id="in1"><span>LIVE IN THE BASEMENT</span><span>LOUD AND CLOSE</span><span>120 PEOPLE</span></div></div>
 
   <section class="sched" id="sched">
     <h2>— 12月の予定</h2>
@@ -105,7 +105,7 @@
 
   <section class="two">
     <div id="about"><h2>ABOUT THE ROOM</h2><p class="big ab">低音は<br>足元から</p>
-      <p class="jp">ここは前、倉庫だった。天井は2.4mで壁はコンクリむき出し、ベースが足元から来る箱。耳栓は受付で100円</p>
+      <p class="jp">ここは前、倉庫だった。天井は2.4mで壁はコンクリむき出し。耳栓は受付で100円</p>
       <p class="jp" style="margin-top:.9em">ステージの高さは30cmしかなくて、客との距離は近い</p></div>
     <div id="access"><h2>ACCESS</h2>
       <dl class="jp"><div><dt>店名</dt><dd>LOW TIDE（架空・見本）</dd></div><div><dt>住所</dt><dd>〒000-0000　○○県○○市○○町 2-3　B1F</dd></div><div><dt>最寄り</dt><dd>○○駅から徒歩4分</dd></div><div><dt>入場</dt><dd>開場から30分は整理番号順</dd></div><div><dt>ドリンク</dt><dd>1D＝600円（全公演で必要）</dd></div></dl>
@@ -146,7 +146,7 @@
     inn.innerHTML = html;
     return { el: inn, dir: dir, x: 0, w: 0 };
   }
-  var b1 = belt('in1', ['LIVE IN THE BASEMENT', 'NO LAST TRAIN PROBLEM', '120 PEOPLE'], -1);
+  var b1 = belt('in1', ['LIVE IN THE BASEMENT', 'LOUD AND CLOSE', '120 PEOPLE'], -1);
   var b2 = belt('in2', ['EARPLUGS AT THE DOOR', 'ONE DRINK', 'OPEN 17:00–18:30'], 1);
   var belts = [b1, b2];
   function measure() { belts.forEach(function (b) { b.w = b.el.scrollWidth / 2; if (b.dir > 0) b.x = -b.w; }); }
