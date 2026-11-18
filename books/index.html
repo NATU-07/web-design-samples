@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e9e2d0">
+<title>頁と余白 — 古本と新刊の店（制作見本）</title>
+<meta name="description" content="古本と新刊を半分ずつ並べる、小さな本屋。店の奥で、週に三日、珈琲も出します（制作見本・架空のお店）。">
+<meta property="og:title" content="頁と余白（制作見本）">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='30' y='14' width='16' height='72' fill='%23a8452a'/%3E%3Crect x='50' y='24' width='14' height='62' fill='%232e3f55'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<style>
+  :root { --bg: #e9e2d0; --ink: #26231e; --mute: #5d574a; --rust: #a8452a; --navy: #2e3f55; --olive: #6b7340; --mustard: #c79a2e; --paper: #f4efe1; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: auto; }
+  body { background: var(--bg); color: var(--ink); font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif; line-height: 1.95; overflow-x: hidden; word-break: auto-phrase; text-wrap: pretty; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+  .serif { font-family: "Kaisei Tokumin", "Yu Mincho", serif; }
+
+  /* 横に進む仕組み: 縦に動かすと、横に流れる（スクロール量を、そのまま横の位置にする） */
+  .scroller { height: var(--total, 520vh); position: relative; }
+  .stage { position: sticky; top: 0; height: 100vh; overflow: clip; }
+  html:not(.js) .scroller { height: auto; } html:not(.js) .stage { position: static; height: auto; overflow: visible; }
+  html:not(.js) .track { width: auto; flex-direction: column; transform: none; } html:not(.js) .panel { width: auto; height: auto; padding: 96px 28px 56px; }
+  html:not(.js) .far, html:not(.js) .bar, html:not(.js) .hint { display: none; }
+  .track { display: flex; height: 100%; width: max-content; will-change: transform; transform: translate3d(calc(var(--x, 0) * -1px), 0, 0); }
+  .panel { position: relative; height: 100%; flex: none; display: flex; align-items: center; padding: 0 clamp(28px, 6vw, 90px); }
+  .p1 { width: 118vw; } .p2 { width: 100vw; } .p3 { width: 150vw; } .p4 { width: 100vw; } .p5 { width: 90vw; }
+
+  /* 奥の層は、ゆっくり動く */
+  .far { position: absolute; inset: 0; transform: translate3d(calc(var(--x, 0) * .55px), 0, 0); pointer-events: none; }
+  .far .wall { position: absolute; left: -10vw; right: -60vw; top: 0; bottom: 0; background: linear-gradient(0deg, rgba(38,35,30,.08) 0 2px, transparent 2px 100%) 0 0/100% 90px; }
+  .bignum { position: absolute; font-family: "Kaisei Tokumin", serif; font-weight: 700; color: rgba(38,35,30,.06); line-height: .8; user-select: none; }
+
+  header { position: fixed; z-index: 20; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 18px clamp(20px, 4vw, 48px); pointer-events: none; }
+  header > * { pointer-events: auto; }
+  .logo { font-family: "Kaisei Tokumin", serif; font-weight: 700; font-size: 19px; letter-spacing: .14em; display: flex; align-items: center; gap: 12px; }
+  .logo small { font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; letter-spacing: .1em; border: 1px solid var(--ink); padding: 0 8px; font-weight: 500; }
+  .chap { display: flex; gap: 20px; font-size: 13px; letter-spacing: .12em; }
+  .chap a { opacity: .55; padding-bottom: 2px; border-bottom: 1px solid transparent; transition: opacity .25s, border-color .25s; }
+  .chap a.on { opacity: 1; border-color: var(--ink); }
+  .bar { position: fixed; z-index: 20; left: clamp(20px, 4vw, 48px); right: clamp(20px, 4vw, 48px); bottom: 22px; height: 2px; background: rgba(38,35,30,.18); }
+  .bar i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--prog, 0) * 100%); background: var(--ink); }
+  .hint { position: fixed; z-index: 20; right: clamp(20px, 4vw, 48px); bottom: 36px; font-size: 12px; letter-spacing: .2em; color: var(--mute); transition: opacity .4s; }
+
+  /* 1: 表紙 */
+  .cover { position: relative; z-index: 3; max-width: 40em; margin-top: -14vh; }
+  .cover p, .cover .stat { text-shadow: 0 0 10px var(--bg), 0 0 4px var(--bg); }
+  .cover h1 { font-family: "Kaisei Tokumin", serif; font-weight: 700; font-size: clamp(54px, 10vw, 150px); line-height: 1.08; letter-spacing: .08em; }
+  .cover h1 span { display: inline-block; }
+  .cover h1 .amp { color: var(--rust); font-size: .5em; vertical-align: .55em; margin: 0 .05em; }
+  .cover p { margin-top: 28px; font-size: clamp(15px, 1.6vw, 19px); max-width: 26em; }
+  .cover .stat { display: flex; gap: 34px; margin-top: 36px; font-size: 13px; color: var(--mute); }
+  .cover .stat b { display: block; font-family: "Kaisei Tokumin", serif; font-size: 36px; color: var(--ink); line-height: 1.1; }
+
+  /* 本棚: 背表紙は、通り過ぎるとき、少し浮く */
+  .shelf { position: absolute; left: 0; bottom: 9vh; opacity: .92; display: flex; align-items: flex-end; gap: 3px; transform: translate3d(calc(var(--x, 0) * .2px), 0, 0); }
+  .spine { width: var(--w); height: calc(var(--h) * .72); background: var(--c); border-radius: 2px 2px 0 0; position: relative; transition: transform .45s cubic-bezier(.2,.8,.2,1); transform-origin: bottom center; box-shadow: inset -3px 0 0 rgba(0,0,0,.12), inset 2px 0 0 rgba(255,255,255,.14); }
+  .spine::after { content: ""; position: absolute; left: 18%; right: 18%; top: 12%; height: 3px; background: rgba(255,255,255,.5); }
+  .spine:hover, .spine.lift { transform: translateY(-14px) rotate(-1.5deg); }
+
+  /* 2: 店のこと */
+  .about { max-width: 44em; position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+  .about h2, .shelves h2, .events h2, .visit h2 { font-family: "Kaisei Tokumin", serif; font-weight: 700; font-size: clamp(30px, 4vw, 54px); line-height: 1.4; letter-spacing: .08em; }
+  .about p + p { margin-top: 1.2em; }
+  .about p { font-size: 15.5px; }
+  .about .col2 { padding-top: 3.5em; }
+
+  /* 3: 棚の案内 */
+  .shelves { position: relative; z-index: 2; display: flex; gap: clamp(40px, 6vw, 90px); align-items: flex-start; }
+  .shelves .lead { flex: none; width: 17em; }
+  .shelves .lead p { margin-top: 16px; color: var(--mute); font-size: 14.5px; }
+  .tana { flex: none; width: 15em; border-left: 2px solid var(--ink); padding: 0 0 0 20px; }
+  .tana h3 { font-family: "Kaisei Tokumin", serif; font-size: 26px; font-weight: 700; letter-spacing: .1em; line-height: 1.4; }
+  .tana .no { font-size: 12px; color: var(--rust); letter-spacing: .2em; display: block; margin-bottom: 6px; }
+  .tana ul { list-style: none; margin-top: 14px; font-size: 14.5px; }
+  .tana li { padding: 5px 0; border-bottom: 1px dotted rgba(38,35,30,.35); display: flex; justify-content: space-between; gap: 12px; }
+  .tana li em { font-style: normal; color: var(--mute); font-size: 13px; white-space: nowrap; }
+  .tana:nth-child(odd) { margin-top: 6vh; }
+
+  /* 4: 催し */
+  .events { position: relative; z-index: 2; }
+  .cal { margin-top: 26px; display: grid; grid-template-columns: repeat(2, minmax(15em, 19em)); gap: 18px 26px; }
+  .ev { background: var(--paper); padding: 18px 20px 16px; box-shadow: 0 1px 0 rgba(0,0,0,.18), 5px 6px 0 rgba(38,35,30,.08); transition: transform .35s; }
+  .ev:nth-child(1) { transform: rotate(-1.2deg); } .ev:nth-child(2) { transform: rotate(1deg); } .ev:nth-child(3) { transform: rotate(.6deg); } .ev:nth-child(4) { transform: rotate(-.8deg); }
+  .ev:hover { transform: rotate(0) translateY(-4px); }
+  .ev .d { font-family: "Kaisei Tokumin", serif; font-size: 34px; font-weight: 700; line-height: 1; color: var(--rust); }
+  .ev .d small { font-size: 13px; color: var(--mute); margin-left: 6px; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 500; }
+  .ev b { display: block; margin-top: 8px; font-size: 16px; line-height: 1.6; }
+  .ev span { font-size: 13px; color: var(--mute); }
+
+  /* 5: 来店 */
+  .visit { position: relative; z-index: 2; max-width: 30em; }
+  .visit dl div { display: grid; grid-template-columns: 5.5em 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(38,35,30,.25); font-size: 15px; }
+  .visit dt { color: var(--mute); letter-spacing: .15em; font-size: 13px; }
+  .note { margin-top: 16px; font-size: 12.5px; color: var(--mute); }
+  .back { display: inline-block; margin-top: 18px; font-size: 13px; border-bottom: 1px solid var(--ink); }
+
+  /* 狭い画面: 横に進まず、縦に並べる */
+  @media (max-width: 900px) {
+    .scroller { height: auto; }
+    .stage { position: static; height: auto; overflow: visible; }
+    .track { width: auto; flex-direction: column; transform: none; }
+    .panel { width: auto !important; height: auto; padding: 96px 22px 56px; flex-direction: column; align-items: flex-start; }
+    .far, .bignum, .bar, .hint { display: none; }
+    .chap { display: none; }
+    .shelf { position: static; transform: none; margin-top: 36px; overflow: hidden; }
+    .about, .shelves { grid-template-columns: 1fr; display: flex; flex-direction: column; gap: 26px; }
+    .shelves .lead, .tana { width: auto; }
+    .tana:nth-child(odd) { margin-top: 0; }
+    .cal { grid-template-columns: 1fr; }
+    .about .col2 { padding-top: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .spine, .ev { transition: none; } }
+  .pn { position: fixed; z-index: 21; bottom: 28px; font: inherit; font-size: 14px; font-weight: 700; padding: 10px 18px; background: var(--ink); color: var(--bg, #fff); border: 0; cursor: pointer; }
+  .pn.prev { left: clamp(20px, 4vw, 48px); } .pn.next { right: clamp(20px, 4vw, 48px); }
+  .hint { bottom: 84px; }
+  html:not(.js) .pn { display: none; }
+  @media (max-width: 860px) { .pn { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#p1">頁と余白<small>SAMPLE</small></a>
+  <nav class="chap" aria-label="章">
+    <a href="#p1" data-i="0">表紙</a><a href="#p2" data-i="1">店のこと</a><a href="#p3" data-i="2">棚</a><a href="#p4" data-i="3">催し</a><a href="#p5" data-i="4">営業時間・場所</a>
+  </nav>
+</header>
+<div class="bar" aria-hidden="true"><i></i></div>
+<div class="hint" id="hint" aria-hidden="true">下へ動かすと、横に進みます →</div>
+
+<main class="scroller" id="scroller">
+  <div class="stage">
+    <div class="far" aria-hidden="true"><div class="wall"></div>
+      <span class="bignum" style="left:112vw;top:12vh;font-size:44vh">二</span>
+      <span class="bignum" style="left:212vw;top:10vh;font-size:44vh">三</span>
+      <span class="bignum" style="left:372vw;top:12vh;font-size:44vh">四</span>
+    </div>
+    <div class="track" id="track">
+      <section class="panel p1" id="p1">
+        <div class="cover">
+          <h1><span>頁</span><span class="amp">と</span><span>余白</span></h1>
+          <p>古本と新刊を、半分ずつ並べています。棚の端は空けてあります。買う前に一冊置いて読む場所です。</p>
+          <div class="stat"><div><b>2,800</b>冊 / 店の蔵書</div><div><b>11</b>年 / 開店から</div><div><b>3</b>日 / 奥で珈琲を出す日</div></div>
+        </div>
+        <div class="shelf" id="shelf" aria-hidden="true"></div>
+      </section>
+
+      <section class="panel p2" id="p2">
+        <div class="about">
+          <div><h2>棚は月に一度、<br>半分入れ替えます。</h2></div>
+          <div class="col2">
+            <p>店主が読んで、人に勧めたいと思った本だけを置いています。点数は少なめで、同じ本は二冊までです。</p>
+            <p>古本は、買い取りもしています。段ボールで持ち込める量なら、その場で値をつけます。</p>
+            <p>ポップは、書きません。本の脇に、店主の一言を、手書きの紙で挟んであります。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel p3" id="p3">
+        <div class="shelves">
+          <div class="lead"><h2>棚の<br>案内。</h2><p>入口から右回りに、順に並んでいます。棚の名前は、店主が呼んでいる名前のままです。</p></div>
+          <div class="tana"><span class="no">棚 一</span><h3>料理と<br>住まい</h3><ul><li>料理<em>420冊</em></li><li>掃除と洗濯<em>60冊</em></li><li>住まい<em>180冊</em></li></ul></div>
+          <div class="tana"><span class="no">棚 二</span><h3>短編・随筆<br>・詩</h3><ul><li>短編<em>310冊</em></li><li>随筆<em>520冊</em></li><li>詩集<em>140冊</em></li></ul></div>
+          <div class="tana"><span class="no">棚 三</span><h3>旅・地図<br>・写真集</h3><ul><li>旅の記録<em>260冊</em></li><li>地図と地誌<em>190冊</em></li><li>写真集<em>230冊</em></li></ul></div>
+          <div class="tana"><span class="no">棚 四</span><h3>絵本と<br>児童書</h3><ul><li>絵本<em>380冊</em></li><li>はじめての読み物<em>150冊</em></li></ul></div>
+        </div>
+      </section>
+
+      <section class="panel p4" id="p4">
+        <div class="events">
+          <h2>十二月の<br>催し</h2>
+          <div class="cal">
+            <div class="ev"><div class="d">5<small>土</small></div><b>古本の持ち寄り市</b><span>十一時から。持ち込みは、一人五冊まで</span></div>
+            <div class="ev"><div class="d">12<small>土</small></div><b>朗読の会「冬の短編」</b><span>十九時から。席は十二。要予約</span></div>
+            <div class="ev"><div class="d">19<small>土</small></div><b>製本のワークショップ</b><span>十四時から。三千円。道具は貸します</span></div>
+            <div class="ev"><div class="d">27<small>日</small></div><b>年内の最終営業</b><span>十七時で閉めます。一月は五日から</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel p5" id="p5">
+        <div class="visit">
+          <h2>駅から徒歩九分。<br>坂の途中の店です。</h2>
+          <dl style="margin-top:26px">
+            <div><dt>店名</dt><dd>頁と余白（架空のお店・見本）</dd></div>
+            <div><dt>営業</dt><dd>十一時から十九時。火曜は休み</dd></div>
+            <div><dt>住所</dt><dd>〒000-0000　○○県○○市○○町 7-2</dd></div>
+            <div><dt>珈琲</dt><dd>木・金・土の十三時から</dd></div>
+          </dl>
+          <p class="note">※ 制作見本です。実在のお店とは関係ありません。</p>
+          <a class="back" href="../index.html">見本の一覧に戻る</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var scroller = document.getElementById('scroller'), track = document.getElementById('track');
+  var mq = window.matchMedia('(max-width: 900px)');
+
+  /* 背表紙を、並べる（色は、五色だけ） */
+  var shelf = document.getElementById('shelf');
+  var cols = ['#a8452a', '#2e3f55', '#6b7340', '#c79a2e', '#26231e', '#8a7a5c'];
+  var seed = 7; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (var i = 0; i < 60; i++) {
+    var s = document.createElement('div'); s.className = 'spine';
+    s.style.setProperty('--w', (16 + Math.floor(rnd() * 20)) + 'px');
+    s.style.setProperty('--h', (150 + Math.floor(rnd() * 150)) + 'px');
+    s.style.setProperty('--c', cols[Math.floor(rnd() * cols.length)]);
+    shelf.appendChild(s);
+  }
+
+  var stageEl = document.querySelector('.stage');
+  stageEl.addEventListener('scroll', function () { stageEl.scrollLeft = 0; });
+  document.addEventListener('focusin', function () { stageEl.scrollLeft = 0; });
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+  var links = Array.prototype.slice.call(document.querySelectorAll('.chap a'));
+  var maxX = 0, offs = [];
+  function measure() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    maxX = Math.max(0, track.scrollWidth - vw);
+    scroller.style.setProperty('--total', (maxX + vh) + 'px');
+    offs = panels.map(function (p) { return p.offsetLeft; });
+  }
+  var ticking = false, last = -1;
+  function update() {
+    ticking = false;
+    if (mq.matches) { root.style.removeProperty('--x'); return; }
+    var top = scroller.getBoundingClientRect().top, range = Math.max(1, scroller.offsetHeight - window.innerHeight);
+    var p = Math.min(1, Math.max(0, -top / range)), x = p * maxX;
+    root.style.setProperty('--x', x.toFixed(1)); root.style.setProperty('--prog', p.toFixed(4));
+    var idx = 0; for (var i = 0; i < offs.length; i++) if (x + window.innerWidth * .5 >= offs[i]) idx = i;
+    if (idx !== last) { last = idx; links.forEach(function (a, k) { a.classList.toggle('on', k === idx); }); }
+    document.getElementById('hint').style.opacity = p > .02 ? 0 : 1;
+    /* 通り過ぎる背表紙が、順に浮く */
+    var rect = shelf.getBoundingClientRect(), c = window.innerWidth * .5, kids = shelf.children;
+    for (var j = 0; j < kids.length; j++) { var r = kids[j].getBoundingClientRect(); kids[j].classList.toggle('lift', Math.abs(r.left + r.width / 2 - c) < 22 && r.right > 0 && r.left < window.innerWidth); }
+  }
+  function req() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+  window.addEventListener('scroll', req, { passive: true });
+  window.addEventListener('resize', function () { measure(); req(); });
+  mq.addEventListener && mq.addEventListener('change', function () { measure(); req(); });
+
+  /* 前へ・次へ */
+  [["prev","← 前へ",-1],["next","次へ →",1]].forEach(function (d) {
+    var b = document.createElement("button"); b.className = "pn " + d[0]; b.type = "button"; b.textContent = d[1];
+    b.addEventListener("click", function () { var k = Math.max(0, Math.min(links.length - 1, last + d[2])); links[k].click(); });
+    document.body.appendChild(b);
+  });
+  /* 章のリンク: 縦のスクロール量に直して、動かす */
+  links.concat([document.querySelector('.logo')]).forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (mq.matches) return;
+      e.preventDefault();
+      var id = a.getAttribute('href').slice(1), k = panels.findIndex(function (p) { return p.id === id; });
+      var x = Math.min(offs[k] || 0, maxX), y = scroller.offsetTop + (maxX ? x / maxX : 0) * (scroller.offsetHeight - window.innerHeight);
+      window.scrollTo({ top: y, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); req(); });
+  measure(); update();
+})();
+</script>
+</body>
+</html>

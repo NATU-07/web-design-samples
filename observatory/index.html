@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070a14">
+<title>星守天文台 — 市立の小さな天文台（制作見本）</title>
+<meta name="description" content="口径四十センチの望遠鏡で、土曜の夜に、月と惑星を見せる天文台。予約は、前日まで（制作見本・架空の施設）。">
+<meta property="og:title" content="星守天文台（制作見本）">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='30' fill='%23e8dca8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #070a14; --fg: #e9e6dc; --mute: #8f98ad; --gold: #e8dca8; --line: rgba(233,230,220,.22); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif; font-weight: 400; line-height: 2; overflow-x: hidden; word-break: auto-phrase; text-wrap: pretty; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+  .cg { font-family: "Cormorant Garamond", "Zen Kaku Gothic New", serif; }
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+
+  /* 全画面: 縦に動かす量で、画面が一枚ずつ切り替わる */
+  .scroller { height: calc(var(--n, 5) * 100vh); position: relative; z-index: 1; }
+  .stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .slide { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 clamp(24px, 8vw, 140px); clip-path: circle(0% at var(--cx, 50%) var(--cy, 50%)); transition: clip-path 1.1s cubic-bezier(.7,0,.2,1); background: var(--bgc, transparent); visibility: hidden; }
+  .slide.on { clip-path: circle(150% at var(--cx, 50%) var(--cy, 50%)); visibility: visible; z-index: 2; }
+  .slide.prev { clip-path: circle(150% at var(--cx, 50%) var(--cy, 50%)); visibility: visible; z-index: 1; }
+  .s1 { --bgc: transparent; } .s2 { --bgc: rgba(9,13,28,.55); } .s3 { --bgc: rgba(14,22,42,.55); } .s4 { --bgc: rgba(7,11,24,.55); } .s5 { --bgc: rgba(14,20,38,.55); }
+  html:not(.js) .scroller { height: auto; } html:not(.js) .stage { position: static; height: auto; } html:not(.js) .slide { position: relative; clip-path: none; visibility: visible; min-height: 100vh; }
+
+  header { position: fixed; z-index: 10; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 20px clamp(20px, 4vw, 52px); }
+  .logo { font-size: 20px; letter-spacing: .3em; display: flex; align-items: center; gap: 14px; }
+  .logo small { font-family: "Zen Kaku Gothic New", sans-serif; font-size: 10px; letter-spacing: .1em; border: 1px solid var(--fg); padding: 0 8px; }
+  .dots { position: fixed; z-index: 10; right: clamp(18px, 3vw, 40px); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 14px; }
+  .dots button { appearance: none; border: 0; background: none; cursor: pointer; display: flex; align-items: center; gap: 10px; color: var(--fg); font: inherit; font-size: 11px; letter-spacing: .2em; padding: 0; justify-content: flex-end; }
+  .dots button i { width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--fg); display: block; transition: background .3s, transform .3s; }
+  .dots button.on i { background: var(--gold); border-color: var(--gold); transform: scale(1.5); }
+  .dots button span { opacity: .85; transition: opacity .3s; } .dots button:hover span, .dots button.on span { opacity: .8; }
+  .count { position: fixed; z-index: 10; left: clamp(20px, 4vw, 52px); bottom: 26px; font-size: 12px; letter-spacing: .3em; color: var(--mute); }
+
+  .in { max-width: 44em; position: relative; }
+  .eyebrow { font-size: 12px; letter-spacing: .4em; color: var(--gold); margin-bottom: 18px; display: block; }
+  h1, h2 { font-weight: 400; line-height: 1.3; }
+  h1 { font-size: clamp(44px, 8vw, 118px); letter-spacing: .14em; font-family: "Cormorant Garamond", "Zen Kaku Gothic New", serif; }
+  h1 small { display: block; font-size: .3em; letter-spacing: .5em; margin-top: 16px; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 300; }
+  h2 { font-size: clamp(28px, 4vw, 54px); font-family: "Cormorant Garamond", "Zen Kaku Gothic New", serif; letter-spacing: .06em; margin-bottom: 20px; }
+  .in p { color: #d3d2cc; font-size: 15.5px; max-width: 32em; font-weight: 300; }
+  .in p + p { margin-top: 1em; }
+
+  /* 今夜の月: 今日の日付から、本当の月齢を計算する */
+  .moonrow { display: flex; gap: clamp(24px, 5vw, 70px); align-items: center; flex-wrap: wrap; }
+  .moon { width: clamp(140px, 22vw, 260px); aspect-ratio: 1; flex: none; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; font-size: 14px; margin-top: 14px; }
+  .facts dt { color: var(--mute); letter-spacing: .15em; font-size: 12px; padding-top: .2em; } .facts dd { font-weight: 500; }
+  .big { font-family: "Cormorant Garamond", serif; font-size: clamp(54px, 8vw, 110px); line-height: 1; color: var(--gold); }
+
+  .cal { margin-top: 18px; border-top: 1px solid var(--line); } .cal .e { display: grid; grid-template-columns: 7em 1fr auto; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .cal .e b { font-family: "Cormorant Garamond", serif; font-size: 26px; font-weight: 600; color: var(--gold); } .cal .e span { font-size: 14px; } .cal .e em { font-style: normal; font-size: 12px; color: var(--mute); }
+
+  .spec { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 20px; border-top: 1px solid var(--line); } .spec div { padding: 16px 18px 6px 0; font-size: 12.5px; color: var(--mute); } .spec b { display: block; font-family: "Cormorant Garamond", serif; font-size: clamp(34px, 4.4vw, 56px); font-weight: 400; color: var(--fg); line-height: 1.1; }
+
+  dl.info div { display: grid; grid-template-columns: 6em 1fr; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 15px; } dl.info dt { color: var(--mute); letter-spacing: .12em; font-size: 13px; }
+  .note { margin-top: 16px; font-size: 12.5px; color: var(--mute); } .back { display: inline-block; margin-top: 14px; font-size: 13px; border-bottom: 1px solid var(--fg); }
+  .scrollhint { position: absolute; left: clamp(24px, 8vw, 140px); bottom: 60px; font-size: 11px; letter-spacing: .4em; color: var(--mute); display: flex; align-items: center; gap: 14px; } .scrollhint::after { content: ""; width: 60px; height: 1px; background: var(--mute); }
+
+  @media (max-width: 860px) {
+    .dots { display: none; } .count { display: none; }
+    .scroller { height: auto !important; } .stage { position: static; height: auto; overflow: visible; }
+    .slide { position: relative; clip-path: none !important; visibility: visible !important; min-height: 100svh; padding: 90px 22px 50px; }
+    .spec { grid-template-columns: 1fr; } .cal .e { grid-template-columns: 5em 1fr; } .cal .e em { grid-column: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+  .nx { position: fixed; z-index: 10; right: clamp(18px, 3vw, 40px); bottom: 24px; font: inherit; font-size: 14px; font-weight: 700; padding: 10px 18px; border: 1px solid var(--fg); background: rgba(0,0,0,.35); color: var(--fg); cursor: pointer; }
+  @media (max-width: 860px) { .nx { display: none; } }
+</style>
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<header>
+  <a class="logo cg" href="#s1">星守天文台<small>SAMPLE</small></a>
+</header>
+<nav class="dots" id="dots" aria-label="画面の切り替え"></nav>
+<div class="count cg" id="count" aria-hidden="true">01 / 05</div>
+
+<main class="scroller" id="scroller">
+  <div class="stage" id="stage">
+    <section class="slide s1" id="s1" data-t="表紙">
+      <div class="in"><span class="eyebrow">土曜の夜に開く、市民天文台</span><h1>HOSHIMORI<small>星守天文台</small></h1><p style="margin-top:26px">土曜の夜に、口径四十センチの望遠鏡で、月と惑星を見せています。見るだけなら、一人五百円です。</p></div>
+      <div class="scrollhint" aria-hidden="true">SCROLL</div>
+    </section>
+
+    <section class="slide s2" id="s2" data-t="今夜の月">
+      <div class="in" style="max-width:56em"><span class="eyebrow">TONIGHT — 今夜の月</span>
+        <div class="moonrow">
+          <svg class="moon" id="moon" viewBox="0 0 200 200" aria-label="今夜の月の形"><defs><clipPath id="mc"><circle cx="100" cy="100" r="90"/></clipPath></defs><circle cx="100" cy="100" r="90" fill="#1a2138" stroke="rgba(233,230,220,.25)"/><g clip-path="url(#mc)"><path id="lit" fill="#e8dca8" d=""/></g></svg>
+          <div><div class="big" id="age">—</div><h2 style="margin:6px 0 0;font-size:clamp(20px,2.4vw,30px)" id="phase">—</h2>
+            <dl class="facts"><dt>今日</dt><dd id="today">—</dd><dt>月齢</dt><dd id="agetext">—</dd><dt>光っている面積</dt><dd id="illum">—</dd><dt>次の新月まで</dt><dd id="nextnew">—</dd></dl>
+            <p style="margin-top:14px;font-size:13.5px;color:var(--mute)">この数字は、今日の日付から、このページが計算しています。誤差は、一日ほどです。</p></div>
+        </div></div>
+    </section>
+
+    <section class="slide s3" id="s3" data-t="観望会">
+      <div class="in" style="max-width:48em"><span class="eyebrow">PROGRAM — 十二月の観望会</span><h2>十二月は、<br>土曜の夜に四回。</h2>
+        <div class="cal"><div class="e"><b>12.05</b><span>月と、冬の星座</span><em>19:00 / 残り 4</em></div><div class="e"><b>12.12</b><span>ふたご座流星群の前夜</span><em>20:00 / 残り 11</em></div><div class="e"><b>12.19</b><span>冬の大三角と、オリオン星雲</span><em>19:30 / 残り 7</em></div><div class="e"><b>12.26</b><span>年末の観望会（月と木星）</span><em>19:00 / 受付前</em></div></div>
+        <p style="margin-top:14px;font-size:13px;color:var(--mute)">※ 架空の日程です。曇りの日は、中止になります。</p></div>
+    </section>
+
+    <section class="slide s4" id="s4" data-t="望遠鏡">
+      <div class="in" style="max-width:48em"><span class="eyebrow">THE TELESCOPE</span><h2>口径40cmの主鏡が、<br>光を集めます。</h2>
+        <p>集める光は、人の目の約五千七百倍です。月のクレーターは、一つずつ数えられます。</p>
+        <div class="spec"><div><b>40cm</b>主鏡の口径</div><div><b>5,700×</b>目の何倍の光か</div><div><b>1923</b>鏡を磨いた年</div></div></div>
+    </section>
+
+    <section class="slide s5" id="s5" data-t="来館">
+      <div class="in"><span class="eyebrow">VISIT</span><h2>丘の上の<br>白い丸屋根。</h2>
+        <dl class="info"><div><dt>名称</dt><dd>星守天文台（架空の施設・見本）</dd></div><div><dt>開館</dt><dd>土曜の十八時から二十二時</dd></div><div><dt>予約</dt><dd>前日の十七時まで。電話か、受付で</dd></div><div><dt>住所</dt><dd>〒000-0000　○○県○○市○○町 丘の上 1</dd></div><div><dt>アクセス</dt><dd>駅からバスで七分。徒歩だと十八分</dd></div><div><dt>服装</dt><dd>冬は、思っているより寒いです</dd></div></dl>
+        <p class="note">※ 制作見本です。実在の施設とは関係ありません。</p><a class="back" href="../index.html">見本の一覧に戻る</a></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var narrow = window.matchMedia('(max-width: 860px)');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide')), N = slides.length;
+  var scroller = document.getElementById('scroller');
+  scroller.style.setProperty('--n', N);
+
+  /* 画面の切り替えの目印 */
+  var dots = document.getElementById('dots');
+  slides.forEach(function (s, i) { var b = document.createElement('button'); b.setAttribute('aria-label', s.getAttribute('data-t') + 'へ'); b.innerHTML = '<span>' + s.getAttribute('data-t') + '</span><i></i>'; b.addEventListener('click', function () { go(i); }); dots.appendChild(b); });
+  var dotEls = dots.querySelectorAll('button');
+
+  var cur = -1;
+  function show(i, fromEl) {
+    if (i === cur) return;
+    var prev = cur; cur = i;
+    var r = fromEl ? fromEl.getBoundingClientRect() : null;
+    slides.forEach(function (s, k) {
+      s.classList.remove('prev');
+      if (k === i) { s.style.setProperty('--cx', (r ? (r.left + r.width / 2) : window.innerWidth * (prev < i ? .85 : .15)) + 'px'); s.style.setProperty('--cy', (r ? (r.top + r.height / 2) : window.innerHeight * .5) + 'px'); s.classList.add('on'); }
+      else if (k === prev) { s.classList.remove('on'); s.classList.add('prev'); setTimeout(function () { if (cur !== k) s.classList.remove('prev'); }, 1200); }
+      else s.classList.remove('on');
+    });
+    dotEls.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+    document.getElementById('count').textContent = ('0' + (i + 1)).slice(-2) + ' / ' + ('0' + N).slice(-2);
+  }
+  function update() {
+    if (narrow.matches || !root.classList.contains('js')) return;
+    var top = scroller.getBoundingClientRect().top, range = scroller.offsetHeight - window.innerHeight;
+    var p = Math.max(0, Math.min(.9999, -top / range));
+    show(Math.floor(p * N));
+  }
+  function go(i) {
+    if (narrow.matches) { slides[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); return; }
+    var range = scroller.offsetHeight - window.innerHeight;
+    window.scrollTo({ top: scroller.offsetTop + (i + .5) / N * range, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  var t = false; window.addEventListener('scroll', function () { if (!t) { t = true; requestAnimationFrame(function () { t = false; update(); }); } }, { passive: true });
+  window.addEventListener('resize', update);
+  document.querySelector('.logo').addEventListener('click', function (e) { e.preventDefault(); go(0); });
+  document.addEventListener('keydown', function (e) { if (narrow.matches) return; if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); go(Math.min(N - 1, cur + 1)); } if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); go(Math.max(0, cur - 1)); } });
+  var nx = document.createElement('button'); nx.className = 'nx'; nx.type = 'button'; nx.textContent = '次の画面 ↓';
+  nx.addEventListener('click', function () { go(cur >= N - 1 ? 0 : cur + 1); }); document.body.appendChild(nx);
+  slides[0].classList.add('on'); cur = 0; dotEls[0].classList.add('on'); update();
+
+  /* 今夜の月: 月齢を、日付から計算する（朔望月 29.53日。2000年1月6日18:14 UTC の新月を基準にする） */
+  (function () {
+    var now = new Date(), SYN = 29.530588853, base = Date.UTC(2000, 0, 6, 18, 14);
+    var days = (now.getTime() - base) / 86400000, age = ((days % SYN) + SYN) % SYN;
+    var frac = age / SYN, illum = (1 - Math.cos(2 * Math.PI * frac)) / 2;
+    var name = frac < .03 || frac > .97 ? '新月' : frac < .22 ? '三日月ごろ' : frac < .28 ? '上弦の月' : frac < .47 ? '満ちていく月' : frac < .53 ? '満月' : frac < .72 ? '欠けていく月' : frac < .78 ? '下弦の月' : '有明の月';
+    document.getElementById('age').textContent = age.toFixed(1);
+    document.getElementById('phase').textContent = name;
+    document.getElementById('today').textContent = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+    document.getElementById('agetext').textContent = age.toFixed(1) + ' 日（新月から）';
+    document.getElementById('illum').textContent = Math.round(illum * 100) + ' %';
+    document.getElementById('nextnew').textContent = Math.round(SYN - age) + ' 日';
+    /* 光っている部分の形（円の中の、三日月から満月まで） */
+    var R = 90, c = 100, waxing = frac < .5, k = Math.cos(2 * Math.PI * frac); /* 1=新月, -1=満月 */
+    var rx = Math.abs(k) * R, d;
+    if (illum < .005) d = ''; else {
+      var top = 'M ' + c + ' ' + (c - R), bot = c + ' ' + (c + R);
+      var outer = 'A ' + R + ' ' + R + ' 0 0 ' + (waxing ? 1 : 0) + ' ' + bot;
+      var inner = 'A ' + rx + ' ' + R + ' 0 0 ' + ((waxing ? (k > 0 ? 0 : 1) : (k > 0 ? 1 : 0))) + ' ' + c + ' ' + (c - R);
+      d = top + ' ' + outer + ' ' + inner + ' Z';
+    }
+    document.getElementById('lit').setAttribute('d', d);
+  })();
+
+  /* 星空: 星が、ゆっくり回り、マウスで少しずれる */
+  var cv = document.getElementById('sky'), ctx = cv.getContext('2d'), stars = [], W = 0, H = 0, mx = 0, my = 0, dpr = Math.min(2, window.devicePixelRatio || 1);
+  function resize() { W = window.innerWidth; H = window.innerHeight; cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  var seed = 11; function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  for (var i = 0; i < 260; i++) stars.push({ a: rnd() * Math.PI * 2, r: Math.sqrt(rnd()), z: .3 + rnd() * .9, tw: rnd() * 6, s: .4 + rnd() * 1.3 });
+  window.addEventListener('mousemove', function (e) { mx = (e.clientX / window.innerWidth - .5); my = (e.clientY / window.innerHeight - .5); });
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    var g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#05070f'); g.addColorStop(1, '#0d1428'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    var cx = W * .5, cy = H * .62, R = Math.hypot(W, H) * .62, rot = reduce ? 0 : t * .000012;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i], an = s.a + rot, x = cx + Math.cos(an) * s.r * R + mx * -26 * s.z, y = cy + Math.sin(an) * s.r * R * .8 + my * -26 * s.z;
+      if (x < -4 || x > W + 4 || y < -4 || y > H + 4) continue;
+      var al = .35 + .65 * (.5 + .5 * Math.sin(t * .0016 * s.z + s.tw)); ctx.globalAlpha = reduce ? .8 : al; ctx.fillStyle = '#f4efe0'; ctx.beginPath(); ctx.arc(x, y, s.s * s.z * .8, 0, 6.283); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  resize(); window.addEventListener('resize', function () { resize(); if (reduce) draw(0); });
+  if (reduce) draw(0); else requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

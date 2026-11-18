@@ -185,6 +185,10 @@
     .js .reveal { opacity: 1; transform: none; transition: none; }
     .img-frame img { transition: none; }
   }
+  .hd-info { margin-left: auto; margin-right: 18px; font-size: 14px; font-weight: 700; color: var(--ink); background: rgba(247,241,232,.82); padding: 10px 16px; }
+  .site-header .wrap { display: flex; align-items: center; justify-content: space-between; }
+  .desc { position: absolute; left: clamp(20px, 4vw, 56px); bottom: 56px; max-width: 22em; font-size: 16px; font-weight: 700; line-height: 1.8; color: #fff; text-shadow: 0 1px 12px rgba(40,26,16,.7), 0 1px 3px rgba(40,26,16,.6); }
+  @media (max-width: 720px) { .desc { bottom: 120px; font-size: 14px; } .hd-info { margin-right: 8px; padding: 8px 10px; font-size: 12px; } }
 </style>
 <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -193,7 +197,8 @@
 <header class="site-header" id="top">
   <div class="wrap">
     <a class="logo" href="#hero"><b>ひだまり</b><small>SAMPLE</small></a>
-    <button class="menu-btn en" id="menuBtn" aria-expanded="false" aria-controls="nav">MENU <i></i></button>
+    <a class="hd-info" href="#info">営業時間・場所</a>
+    <button class="menu-btn en" id="menuBtn" aria-expanded="false" aria-controls="nav">目次 <i></i></button>
   </div>
 </header>
 
@@ -201,7 +206,7 @@
   <ul>
     <li><a href="#about">こだわり<small>About</small></a></li>
     <li><a href="#menu">メニュー<small>Menu</small></a></li>
-    <li><a href="#info">店舗情報<small>Information</small></a></li>
+    <li><a href="#info">営業時間・場所<small>Information</small></a></li>
   </ul>
 </nav>
 
@@ -209,8 +214,9 @@
   <div class="hero" id="hero">
     <img class="hero-img" src="img/cafe/hero.jpg" width="1600" height="1067" alt="やわらかな光が入る、木とタイルの店内">
     <div class="hero-inner">
-      <div class="eyebrow en">Coffee &amp; Baked Sweets</div>
+      <div class="eyebrow">珈琲と焼き菓子の小さな喫茶店</div>
       <h1 class="catch mincho"><span class="sr-only">珈琲と焼き菓子 ひだまり　</span>窓辺で、<br>珈琲と焼き菓子を。</h1>
+      <p class="desc">○○駅から徒歩5分。9:00〜18:00、水曜定休。予約は要りません。</p>
       <div class="brand-big"><span class="en">Hidamari</span><small>珈琲と焼き菓子 ひだまり</small></div>
       <div class="scroll en">SCROLL</div>
     </div>
