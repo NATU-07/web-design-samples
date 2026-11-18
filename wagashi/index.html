@@ -63,10 +63,6 @@
   .story p { font-size: clamp(16px, 1.5vw, 18px); }
   .story p + p { margin-top: 1.4em; }
   .story .big { font-size: clamp(22px, 2.6vw, 34px); font-weight: 700; line-height: 1.8; margin-bottom: 1.2em; }
-  .facts { display: grid; gap: 0; border-top: 1px solid var(--ink); }
-  .fact { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); }
-  .fact b { font-size: clamp(28px, 3.6vw, 46px); font-weight: 800; }
-  .fact span { font-size: 14px; color: var(--mute); letter-spacing: .12em; }
 
   /* sweets */
   .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--ink); margin-bottom: 0; }
@@ -152,27 +148,22 @@
       <p class="kana vt">おんかしつかさ　たまゆらどう</p>
       <p class="est vt">創業百二十年　上生菓子と最中</p>
     </div>
-    <p class="plain">創業百二十年の和菓子店。最中は店頭、上生菓子はご予約でお渡ししております</p>
+    <p class="plain">創業百二十年の和菓子店。上生菓子と最中を、店頭でお渡ししております</p>
     <div class="seal" aria-hidden="true">玉<br>響</div>
     <div class="scroll" aria-hidden="true">SCROLL</div>
   </section>
 
   <section class="sec" id="story">
     <div class="wrap">
-      <div class="head rv"><span class="num">壱</span><h2>玉響堂のこと<small>ABOUT</small></h2></div>
+      <div class="head rv"><span class="num">壱</span><h2>玉響堂のこと</h2></div>
       <div class="story">
         <div class="rv">
-          <p class="big">小豆は前の晩から水に浸けます</p>
-          <div class="facts">
-            <div class="fact"><b>百二十</b><span>年 / 創業から</span></div>
-            <div class="fact"><b>四</b><span>代目 / 現在の主人</span></div>
-            <div class="fact"><b>三</b><span>時間 / 粒あんを焚く</span></div>
-          </div>
+          <p class="big">饅頭一つから、百二十年</p>
         </div>
         <div class="rv">
-          <p>玉響堂は明治三十九年にこの町の川沿いで饅頭一つから始めた店で、いまもあんは毎朝店の奥の釜で焚いております</p>
-          <p>焚き始めは午前四時。小豆は季節で様子が変わるので、夏は水を少なめにして冬はさらに三十分かけます。いつお求めいただいても同じ甘さです</p>
-          <p>上生菓子はご予約で承っており、店先の最中とどら焼きは売り切れ次第そこで閉めます</p>
+          <p>玉響堂は明治三十九年にこの町の川沿いで饅頭一つから始めた店で、四代目の私がいまも毎朝、店の奥の釜であんを焚いております</p>
+          <p>焚き始めは午前四時で、粒あんは三時間かけて焚きます。小豆は季節で様子が変わるので、夏は水を少なめにして冬はさらに三十分かけます。いつお求めいただいても同じ甘さです</p>
+          <p>最中とどら焼きは店先に並べております</p>
         </div>
       </div>
     </div>
@@ -180,7 +171,7 @@
 
   <section class="sec" id="sweets">
     <div class="wrap">
-      <div class="head rv"><span class="num">弐</span><h2>お菓子<small>SWEETS</small></h2></div>
+      <div class="head rv"><span class="num">弐</span><h2>お菓子<small>品書き</small></h2></div>
       <div class="rv">
         <div class="tabs" role="tablist" aria-label="お菓子の種類">
           <button class="tab" role="tab" aria-selected="true" aria-controls="p1" id="t1">上生菓子</button>
@@ -191,7 +182,7 @@
           <div class="art" style="--bg-c:#e6d5c3" aria-hidden="true"><b>栗</b></div>
           <div><h3>季節の上生菓子</h3><div class="yomi">じょうなまがし</div>
             <p>月替わりで四種類をお作りしており、十一月は栗を練り込んだ「初時雨」で中はこしあんです。一日に四種類あわせて二十個ほど。へらで一つずつ筋を入れるので、職人が違うと入り方も少し変わります</p>
-            <p class="price">一つ　四百六十円　<small>（税込・前日までのご予約）</small></p></div>
+            <p class="price">一つ　四百六十円　<small>（税込）</small></p></div>
         </div>
         <div class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
           <div class="art" style="--bg-c:#e4d6bd" aria-hidden="true"><b>最</b></div>
@@ -217,7 +208,7 @@
 
   <section class="sec" id="history">
     <div class="wrap">
-      <div class="head rv"><span class="num">参</span><h2>歩み<small>HISTORY</small></h2></div>
+      <div class="head rv"><span class="num">参</span><h2>歩み</h2></div>
       <div class="years" id="years">
         <div class="yr rv"><b>明治三十九年</b><p>川沿いで饅頭と団子の店として開く</p></div>
         <div class="yr rv"><b>昭和二十年</b><p>空襲で店を失う。翌年、焼け跡に小さな屋台を出す</p></div>
@@ -230,7 +221,7 @@
 
   <section class="sec" id="info">
     <div class="wrap">
-      <div class="head rv"><span class="num">四</span><h2>お店<small>INFORMATION</small></h2></div>
+      <div class="head rv"><span class="num">四</span><h2>お店</h2></div>
       <div class="info">
         <dl class="rv">
           <div><dt>店名</dt><dd>御菓子司 玉響堂（架空のお店・見本）</dd></div>

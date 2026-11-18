@@ -51,13 +51,11 @@
 
   /* 1: 表紙 */
   .cover { position: relative; z-index: 3; max-width: 40em; margin-top: -14vh; }
-  .cover p, .cover .stat { text-shadow: 0 0 10px var(--bg), 0 0 4px var(--bg); }
+  .cover p { text-shadow: 0 0 10px var(--bg), 0 0 4px var(--bg); }
   .cover h1 { font-family: "Kaisei Tokumin", serif; font-weight: 700; font-size: clamp(54px, 10vw, 150px); line-height: 1.08; letter-spacing: .08em; }
   .cover h1 span { display: inline-block; }
   .cover h1 .amp { color: var(--rust); font-size: .5em; vertical-align: .55em; margin: 0 .05em; }
   .cover p { margin-top: 28px; font-size: clamp(15px, 1.6vw, 19px); max-width: 26em; }
-  .cover .stat { display: flex; gap: 34px; margin-top: 36px; font-size: 13px; color: var(--mute); }
-  .cover .stat b { display: block; font-family: "Kaisei Tokumin", serif; font-size: 36px; color: var(--ink); line-height: 1.1; }
 
   /* 本棚: 背表紙は、通り過ぎるとき、少し浮く */
   .shelf { position: absolute; left: 0; bottom: 9vh; opacity: .92; display: flex; align-items: flex-end; gap: 3px; transform: translate3d(calc(var(--x, 0) * .2px), 0, 0); }
@@ -146,8 +144,7 @@
       <section class="panel p1" id="p1">
         <div class="cover">
           <h1><span>頁</span><span class="amp">と</span><span>余白</span></h1>
-          <p>古本と新刊を半分ずつ並べていて、棚の端はわざと空けてあります。買う前に、そこで1冊読んでいってください</p>
-          <div class="stat"><div><b>約2,800</b>冊 / 店の在庫</div><div><b>11</b>年 / 開店から</div><div><b>3</b>日 / 奥で珈琲を出す日</div></div>
+          <p>古本と新刊を半分ずつ、在庫は約2,800冊。開店から11年、棚の端はわざと空けてあります。買う前に、そこで1冊読んでいってください</p>
         </div>
         <div class="shelf" id="shelf" aria-hidden="true"></div>
       </section>
